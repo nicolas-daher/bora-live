@@ -104,7 +104,7 @@ Monorepo:
 /
 ├── frontend/                          # React + TypeScript + Vite
 ├── backend/
-│   ├── BoraLive.sln
+│   ├── BoraLive.slnx
 │   ├── src/
 │   │   ├── BoraLive.Domain/           # Núcleo: entidades e regras de negócio
 │   │   ├── BoraLive.Application/      # Casos de uso e interfaces (portas)
@@ -164,7 +164,7 @@ Api ──► Infrastructure ──► Application ──► Domain
 - Lê a chave do Gemini do header e a repassa ao caso de uso; nunca a guarda.
 - Middleware de tratamento de erros, que converte falhas em respostas `ProblemDetails` com mensagens no tom do Bora Live.
 - CORS liberado só para o domínio do frontend.
-- Swagger/OpenAPI ativo em desenvolvimento.
+- Swagger/OpenAPI ativo em desenvolvimento: documento nativo do ASP.NET Core em `/openapi/v1.json` e tela do Swagger em `/swagger`.
 
 ### O que **não** usar (manter o MVP enxuto)
 - Sem MediatR: casos de uso são classes simples injetadas nos endpoints.

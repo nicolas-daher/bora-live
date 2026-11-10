@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BoraLive.Api/BoraLive.Api.csproj" />
+    <Project Path="src/BoraLive.Application/BoraLive.Application.csproj" />
+    <Project Path="src/BoraLive.Domain/BoraLive.Domain.csproj" />
+    <Project Path="src/BoraLive.Infrastructure/BoraLive.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BoraLive.Api.Tests/BoraLive.Api.Tests.csproj" />
+    <Project Path="tests/BoraLive.Application.Tests/BoraLive.Application.Tests.csproj" />
+    <Project Path="tests/BoraLive.Domain.Tests/BoraLive.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,9 @@
+# Fica fora do contexto de build: deixa o envio ao Docker mais rápido
+# e evita que binários compilados no Windows entrem na imagem Linux.
+**/bin/
+**/obj/
+**/.vs/
+**/TestResults/
+tests/
+Dockerfile
+.dockerignore

@@ -65,12 +65,31 @@ O Bora Live não paga API de IA. Para gerar imagens, você usa a sua chave do Ge
 
 ## Rodar localmente
 
-Em breve. A ideia é clonar o repositório e subir frontend e backend com um único comando:
+Você precisa do [Docker](https://www.docker.com/products/docker-desktop/) instalado.
 
 ```bash
 git clone https://github.com/nicolas-daher/bora-live.git
 cd bora-live
-docker compose up
+docker compose up backend --build
+```
+
+Por enquanto só o backend sobe. O frontend ainda está a caminho; quando ele chegar, um `docker compose up` vai subir os dois.
+
+Com o backend no ar:
+
+| Endereço | O que é |
+|---|---|
+| http://localhost:8080/health | Verificação de saúde da API |
+| http://localhost:8080/swagger | Documentação interativa (Swagger) |
+
+### Sem Docker
+
+Com o [SDK do .NET 10](https://dotnet.microsoft.com/download) instalado:
+
+```bash
+cd backend
+dotnet test
+dotnet run --project src/BoraLive.Api
 ```
 
 ## Aviso

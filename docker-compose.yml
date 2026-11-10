@@ -1,10 +1,9 @@
 # Bora Live: ambiente local de desenvolvimento.
 #
-# Uso:  docker compose up --build
+# Uso:  docker compose up backend --build
 #
-# ATENÇÃO: este arquivo é um esqueleto. Ele só funciona depois que existirem
-#   - backend/Dockerfile   (etapa 2)
-#   - frontend/Dockerfile  (etapa 4)
+# ATENÇÃO: o serviço "frontend" ainda não funciona. Ele depende do
+# frontend/Dockerfile, que chega na etapa 4. Até lá, suba só o backend.
 #
 # Nenhuma chave do Gemini entra aqui. A chave fica no navegador do usuário
 # e vai para a API em um header, a cada requisição.
