@@ -1,0 +1,32 @@
+# Bora Live: ambiente local de desenvolvimento.
+#
+# Uso:  docker compose up --build
+#
+# ATENÇÃO: este arquivo é um esqueleto. Ele só funciona depois que existirem
+#   - backend/Dockerfile   (etapa 2)
+#   - frontend/Dockerfile  (etapa 4)
+#
+# Nenhuma chave do Gemini entra aqui. A chave fica no navegador do usuário
+# e vai para a API em um header, a cada requisição.
+
+name: bora-live
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8080:8080" # API em http://localhost:8080
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173" # Interface em http://localhost:5173
+    environment:
+      # O navegador chama a API pelo endereço do host, não pelo nome do serviço.
+      VITE_API_URL: http://localhost:8080
+    depends_on:
+      - backend

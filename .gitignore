@@ -1,0 +1,56 @@
+# =========================================================
+# Backend (.NET)
+# =========================================================
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+TestResults/
+*.trx
+coverage*.json
+coverage*.xml
+*.user
+*.suo
+*.rsuser
+.vs/
+
+# Configurações locais que podem conter segredos
+appsettings.*.local.json
+secrets.json
+
+# =========================================================
+# Frontend (Node / Vite)
+# =========================================================
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================================================
+# Variáveis de ambiente (nunca versionar chaves)
+# =========================================================
+.env
+.env.*
+!.env.example
+
+# =========================================================
+# Editores e sistema operacional
+# =========================================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================================================
+# Claude Code (configurações pessoais)
+# =========================================================
+.claude/settings.local.json
