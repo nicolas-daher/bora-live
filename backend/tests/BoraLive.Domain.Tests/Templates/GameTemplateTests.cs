@@ -1,28 +1,41 @@
 using BoraLive.Domain.Art;
+using BoraLive.Domain.Common;
 using BoraLive.Domain.Templates;
 
 namespace BoraLive.Domain.Tests.Templates;
 
 public class GameTemplateTests
 {
-    private static readonly ArtFormat[] ValidFormats = [ArtFormat.Thumbnail, ArtFormat.Banner];
+    private static TemplateLayout[] ValidLayouts() =>
+        [TestData.Layout(ArtFormat.Thumbnail), TestData.Layout(ArtFormat.Banner)];
 
-    private static TextLayer[] ValidLayers() =>
-        [TestData.Layer(TextRole.StreamerName), TestData.Layer(TextRole.LiveTitle)];
+    // Monta um modelo válido, trocando só o que o teste quer testar.
+    private static Result<GameTemplate> Create(
+        string? id = "cs2-neon",
+        string? name = "CS2 Neon",
+        string? callToAction = "tô ao vivo",
+        IEnumerable<TemplateLayout>? layouts = null) =>
+        GameTemplate.Create(id, name, TestData.Cs2(), callToAction, TestData.Background(), layouts ?? ValidLayouts());
 
     [Fact]
     public void Create_ValidData_ReturnsTemplate()
     {
-        var game = TestData.Cs2();
-
-        var result = GameTemplate.Create("cs2-neon", "  CS2 Neon  ", game, ValidFormats, ValidLayers());
+        var result = Create(name: "  CS2 Neon  ", callToAction: "  tô ao vivo  ");
 
         Assert.True(result.IsSuccess);
         Assert.Equal("cs2-neon", result.Value.Id);
         Assert.Equal("CS2 Neon", result.Value.Name);
-        Assert.Equal(game, result.Value.Game);
-        Assert.Equal(ValidFormats, result.Value.Formats);
-        Assert.Equal(2, result.Value.Layers.Count);
+        Assert.Equal("tô ao vivo", result.Value.CallToAction);
+        Assert.Equal(TestData.Cs2(), result.Value.Game);
+        Assert.Equal(2, result.Value.Layouts.Count);
+    }
+
+    [Fact]
+    public void Create_DerivesFormatsFromLayouts()
+    {
+        var template = Create().Value;
+
+        Assert.Equal([ArtFormat.Thumbnail, ArtFormat.Banner], template.Formats);
     }
 
     [Theory]
@@ -31,9 +44,7 @@ public class GameTemplateTests
     [InlineData("CS2 Neon")]
     public void Create_InvalidId_ReturnsError(string? id)
     {
-        var result = GameTemplate.Create(id, "CS2 Neon", TestData.Cs2(), ValidFormats, ValidLayers());
-
-        Assert.Equal(GameTemplateErrors.InvalidId, result.Error);
+        Assert.Equal(GameTemplateErrors.InvalidId, Create(id: id).Error);
     }
 
     [Theory]
@@ -41,9 +52,7 @@ public class GameTemplateTests
     [InlineData("   ")]
     public void Create_MissingName_ReturnsError(string? name)
     {
-        var result = GameTemplate.Create("cs2-neon", name, TestData.Cs2(), ValidFormats, ValidLayers());
-
-        Assert.Equal(GameTemplateErrors.NameRequired, result.Error);
+        Assert.Equal(GameTemplateErrors.NameRequired, Create(name: name).Error);
     }
 
     [Fact]
@@ -51,63 +60,55 @@ public class GameTemplateTests
     {
         var name = new string('a', GameTemplate.MaxNameLength + 1);
 
-        var result = GameTemplate.Create("cs2-neon", name, TestData.Cs2(), ValidFormats, ValidLayers());
+        Assert.Equal(GameTemplateErrors.NameTooLong, Create(name: name).Error);
+    }
 
-        Assert.Equal(GameTemplateErrors.NameTooLong, result.Error);
+    [Theory]
+    [InlineData(null)]
+    [InlineData("   ")]
+    public void Create_MissingCallToAction_ReturnsError(string? callToAction)
+    {
+        Assert.Equal(GameTemplateErrors.CallToActionRequired, Create(callToAction: callToAction).Error);
     }
 
     [Fact]
-    public void Create_NoFormats_ReturnsError()
+    public void Create_CallToActionAboveTheLimit_ReturnsError()
     {
-        var result = GameTemplate.Create("cs2-neon", "CS2 Neon", TestData.Cs2(), [], ValidLayers());
+        var callToAction = new string('a', GameTemplate.MaxCallToActionLength + 1);
 
-        Assert.Equal(GameTemplateErrors.FormatsRequired, result.Error);
+        Assert.Equal(GameTemplateErrors.CallToActionTooLong, Create(callToAction: callToAction).Error);
     }
 
     [Fact]
-    public void Create_DuplicateFormat_ReturnsError()
+    public void Create_NoLayouts_ReturnsError()
     {
-        ArtFormat[] formats = [ArtFormat.Thumbnail, ArtFormat.Thumbnail];
-
-        var result = GameTemplate.Create("cs2-neon", "CS2 Neon", TestData.Cs2(), formats, ValidLayers());
-
-        Assert.Equal(GameTemplateErrors.DuplicateFormat, result.Error);
+        Assert.Equal(GameTemplateErrors.LayoutsRequired, Create(layouts: []).Error);
     }
 
     [Fact]
-    public void Create_NoLayers_ReturnsError()
+    public void Create_TwoLayoutsForTheSameFormat_ReturnsError()
     {
-        var result = GameTemplate.Create("cs2-neon", "CS2 Neon", TestData.Cs2(), ValidFormats, []);
+        TemplateLayout[] layouts = [TestData.Layout(ArtFormat.Thumbnail), TestData.Layout(ArtFormat.Thumbnail)];
 
-        Assert.Equal(GameTemplateErrors.LayersRequired, result.Error);
-    }
-
-    [Fact]
-    public void Create_TwoLayersWithSameRole_ReturnsError()
-    {
-        TextLayer[] layers = [TestData.Layer(TextRole.LiveTitle), TestData.Layer(TextRole.LiveTitle)];
-
-        var result = GameTemplate.Create("cs2-neon", "CS2 Neon", TestData.Cs2(), ValidFormats, layers);
-
-        Assert.Equal(GameTemplateErrors.DuplicateLayerRole, result.Error);
+        Assert.Equal(GameTemplateErrors.DuplicateFormat, Create(layouts: layouts).Error);
     }
 
     [Fact]
     public void Create_NullGame_Throws()
     {
         Assert.Throws<ArgumentNullException>(() =>
-            GameTemplate.Create("cs2-neon", "CS2 Neon", null!, ValidFormats, ValidLayers()));
+            GameTemplate.Create("cs2-neon", "CS2 Neon", null!, "tô ao vivo", TestData.Background(), ValidLayouts()));
     }
 
     [Fact]
-    public void Create_CopiesTheLists_SoLaterChangesDoNotAffectTheTemplate()
+    public void Create_CopiesTheList_SoLaterChangesDoNotAffectTheTemplate()
     {
-        var formats = new List<ArtFormat> { ArtFormat.Thumbnail };
+        var layouts = new List<TemplateLayout> { TestData.Layout(ArtFormat.Thumbnail) };
 
-        var template = GameTemplate.Create("cs2-neon", "CS2 Neon", TestData.Cs2(), formats, ValidLayers()).Value;
-        formats.Add(ArtFormat.Story);
+        var template = Create(layouts: layouts).Value;
+        layouts.Add(TestData.Layout(ArtFormat.Story));
 
-        Assert.Single(template.Formats);
+        Assert.Single(template.Layouts);
         Assert.False(template.Supports(ArtFormat.Story));
     }
 
@@ -120,5 +121,14 @@ public class GameTemplateTests
         Assert.True(template.Supports(ArtFormat.Banner));
         Assert.False(template.Supports(ArtFormat.Post));
         Assert.False(template.Supports(ArtFormat.Story));
+    }
+
+    [Fact]
+    public void LayoutFor_ReturnsTheLayoutOfTheFormat_OrNull()
+    {
+        var template = TestData.Template(ArtFormat.Thumbnail);
+
+        Assert.Same(ArtFormat.Thumbnail, template.LayoutFor(ArtFormat.Thumbnail)!.Format);
+        Assert.Null(template.LayoutFor(ArtFormat.Story));
     }
 }

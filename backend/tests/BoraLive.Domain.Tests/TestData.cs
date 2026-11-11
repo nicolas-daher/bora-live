@@ -14,12 +14,19 @@ internal static class TestData
     public static TextLayer Layer(TextRole role = TextRole.StreamerName) =>
         TextLayer.Create(role, x: 0.5, y: 0.5, fontSize: 0.1, color: "#FFD166").Value;
 
+    public static TemplateBackground Background() =>
+        TemplateBackground.Create(["#1A1033", "#FF4F8B"], angle: 180).Value;
+
+    public static TemplateLayout Layout(ArtFormat format) =>
+        TemplateLayout.Create(format, [Layer(TextRole.StreamerName), Layer(TextRole.LiveTitle)]).Value;
+
     /// <summary>Modelo de CS2 que aceita só os formatos informados (por padrão, thumbnail e banner).</summary>
     public static GameTemplate Template(params ArtFormat[] formats) =>
         GameTemplate.Create(
             "cs2-neon",
             "CS2 Neon",
             Cs2(),
-            formats.Length > 0 ? formats : [ArtFormat.Thumbnail, ArtFormat.Banner],
-            [Layer(TextRole.StreamerName), Layer(TextRole.LiveTitle)]).Value;
+            "tô ao vivo",
+            Background(),
+            (formats.Length > 0 ? formats : [ArtFormat.Thumbnail, ArtFormat.Banner]).Select(Layout)).Value;
 }

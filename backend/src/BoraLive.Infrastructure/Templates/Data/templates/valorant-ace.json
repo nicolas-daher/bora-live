@@ -1,0 +1,68 @@
+{
+  "id": "valorant-ace",
+  "name": "Ace",
+  "gameId": "valorant",
+  "callToAction": "partiu live",
+  "background": {
+    "colors": [
+      "#ECE8E1",
+      "#F2C4C0",
+      "#E8384F"
+    ],
+    "angle": 120
+  },
+  "layouts": [
+    {
+      "format": "thumbnail",
+      "logo": {
+        "x": 0.5,
+        "y": 0.2,
+        "size": 0.2
+      },
+      "layers": [
+        { "role": "callToAction", "x": 0.5, "y": 0.36, "fontSize": 0.05, "color": "#7A1323", "align": "center", "font": "body", "maxWidth": 0.8 },
+        { "role": "liveTitle", "x": 0.5, "y": 0.46, "fontSize": 0.11, "color": "#111823", "align": "center", "font": "display", "maxWidth": 0.8 },
+        { "role": "streamerName", "x": 0.5, "y": 0.84, "fontSize": 0.065, "color": "#111823", "align": "center", "font": "body", "maxWidth": 0.8 }
+      ]
+    },
+    {
+      "format": "banner",
+      "logo": {
+        "x": 0.1,
+        "y": 0.5,
+        "size": 0.5
+      },
+      "layers": [
+        { "role": "callToAction", "x": 0.5, "y": 0.1, "fontSize": 0.08, "color": "#7A1323", "align": "center", "font": "body", "maxWidth": 0.6 },
+        { "role": "liveTitle", "x": 0.5, "y": 0.28, "fontSize": 0.16, "color": "#111823", "align": "center", "font": "display", "maxWidth": 0.6 },
+        { "role": "streamerName", "x": 0.5, "y": 0.76, "fontSize": 0.1, "color": "#111823", "align": "center", "font": "body", "maxWidth": 0.6 }
+      ]
+    },
+    {
+      "format": "post",
+      "logo": {
+        "x": 0.5,
+        "y": 0.18,
+        "size": 0.16
+      },
+      "layers": [
+        { "role": "callToAction", "x": 0.5, "y": 0.32, "fontSize": 0.04, "color": "#7A1323", "align": "center", "font": "body", "maxWidth": 0.84 },
+        { "role": "liveTitle", "x": 0.5, "y": 0.42, "fontSize": 0.08, "color": "#111823", "align": "center", "font": "display", "maxWidth": 0.84 },
+        { "role": "streamerName", "x": 0.5, "y": 0.84, "fontSize": 0.05, "color": "#111823", "align": "center", "font": "body", "maxWidth": 0.84 }
+      ]
+    },
+    {
+      "format": "story",
+      "logo": {
+        "x": 0.5,
+        "y": 0.2,
+        "size": 0.1
+      },
+      "layers": [
+        { "role": "callToAction", "x": 0.5, "y": 0.3, "fontSize": 0.028, "color": "#7A1323", "align": "center", "font": "body", "maxWidth": 0.84 },
+        { "role": "liveTitle", "x": 0.5, "y": 0.38, "fontSize": 0.05, "color": "#111823", "align": "center", "font": "display", "maxWidth": 0.84 },
+        { "role": "streamerName", "x": 0.5, "y": 0.64, "fontSize": 0.03, "color": "#111823", "align": "center", "font": "body", "maxWidth": 0.84 }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 using BoraLive.Application.Abstractions;
 using BoraLive.Infrastructure.Gemini;
+using BoraLive.Infrastructure.Templates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -27,6 +28,9 @@ public static class DependencyInjection
             client.BaseAddress = new Uri(options.BaseUrl);
             client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
         });
+
+        // Singleton: os modelos são lidos uma vez e reaproveitados por todas as requisições.
+        services.AddSingleton<ITemplateRepository, JsonTemplateRepository>();
 
         return services;
     }

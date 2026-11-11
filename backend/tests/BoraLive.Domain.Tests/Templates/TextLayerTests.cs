@@ -73,4 +73,46 @@ public class TextLayerTests
 
         Assert.Equal(TextLayerErrors.InvalidRole, result.Error);
     }
+
+    [Fact]
+    public void Create_WithoutStyle_UsesLeftDisplayAndFullWidth()
+    {
+        var layer = TextLayer.Create(TextRole.StreamerName, 0.5, 0.5, 0.1, "#FFFFFF").Value;
+
+        Assert.Equal(TextAlign.Left, layer.Align);
+        Assert.Equal(TextFont.Display, layer.Font);
+        Assert.Equal(1, layer.MaxWidth);
+    }
+
+    [Fact]
+    public void Create_WithStyle_KeepsIt()
+    {
+        var layer = TextLayer.Create(
+            TextRole.LiveTitle, 0.5, 0.5, 0.1, "#FFFFFF", TextAlign.Center, TextFont.Body, maxWidth: 0.8).Value;
+
+        Assert.Equal(TextAlign.Center, layer.Align);
+        Assert.Equal(TextFont.Body, layer.Font);
+        Assert.Equal(0.8, layer.MaxWidth);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1.1)]
+    [InlineData(double.NaN)]
+    public void Create_MaxWidthOutOfRange_ReturnsError(double maxWidth)
+    {
+        var result = TextLayer.Create(TextRole.StreamerName, 0.5, 0.5, 0.1, "#FFFFFF", maxWidth: maxWidth);
+
+        Assert.Equal(TextLayerErrors.MaxWidthOutOfRange, result.Error);
+    }
+
+    [Fact]
+    public void Create_UndefinedAlignOrFont_ReturnsError()
+    {
+        var badAlign = TextLayer.Create(TextRole.StreamerName, 0.5, 0.5, 0.1, "#FFFFFF", align: (TextAlign)99);
+        var badFont = TextLayer.Create(TextRole.StreamerName, 0.5, 0.5, 0.1, "#FFFFFF", font: (TextFont)99);
+
+        Assert.Equal(TextLayerErrors.InvalidStyle, badAlign.Error);
+        Assert.Equal(TextLayerErrors.InvalidStyle, badFont.Error);
+    }
 }

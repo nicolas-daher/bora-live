@@ -1,4 +1,5 @@
 using BoraLive.Application.ApiKeys;
+using BoraLive.Application.Templates;
 using BoraLive.Domain.Common;
 
 namespace BoraLive.Api.Http;
@@ -15,6 +16,7 @@ public static class ErrorResults
         [ApiKeyErrors.Missing.Code] = StatusCodes.Status400BadRequest,
         [ApiKeyErrors.Invalid.Code] = StatusCodes.Status401Unauthorized,
         [ApiKeyErrors.ProviderUnavailable.Code] = StatusCodes.Status503ServiceUnavailable,
+        [TemplateErrors.GameNotFound.Code] = StatusCodes.Status404NotFound,
     };
 
     public static IResult ToProblem(this Error error)

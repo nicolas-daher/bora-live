@@ -1,0 +1,68 @@
+{
+  "id": "cs2-tatico",
+  "name": "Tático",
+  "gameId": "cs2",
+  "callToAction": "tô ao vivo",
+  "background": {
+    "colors": [
+      "#0B1E33",
+      "#1F4E79",
+      "#F2A541"
+    ],
+    "angle": 135
+  },
+  "layouts": [
+    {
+      "format": "thumbnail",
+      "logo": {
+        "x": 0.86,
+        "y": 0.2,
+        "size": 0.24
+      },
+      "layers": [
+        { "role": "callToAction", "x": 0.06, "y": 0.09, "fontSize": 0.055, "color": "#F2A541", "align": "left", "font": "body", "maxWidth": 0.5 },
+        { "role": "liveTitle", "x": 0.06, "y": 0.28, "fontSize": 0.13, "color": "#FFFFFF", "align": "left", "font": "display", "maxWidth": 0.62 },
+        { "role": "streamerName", "x": 0.06, "y": 0.82, "fontSize": 0.07, "color": "#FFE2B0", "align": "left", "font": "body", "maxWidth": 0.6 }
+      ]
+    },
+    {
+      "format": "banner",
+      "logo": {
+        "x": 0.9,
+        "y": 0.5,
+        "size": 0.5
+      },
+      "layers": [
+        { "role": "callToAction", "x": 0.05, "y": 0.12, "fontSize": 0.08, "color": "#F2A541", "align": "left", "font": "body", "maxWidth": 0.5 },
+        { "role": "liveTitle", "x": 0.05, "y": 0.3, "fontSize": 0.17, "color": "#FFFFFF", "align": "left", "font": "display", "maxWidth": 0.6 },
+        { "role": "streamerName", "x": 0.05, "y": 0.76, "fontSize": 0.1, "color": "#FFE2B0", "align": "left", "font": "body", "maxWidth": 0.6 }
+      ]
+    },
+    {
+      "format": "post",
+      "logo": {
+        "x": 0.84,
+        "y": 0.14,
+        "size": 0.16
+      },
+      "layers": [
+        { "role": "callToAction", "x": 0.08, "y": 0.08, "fontSize": 0.04, "color": "#F2A541", "align": "left", "font": "body", "maxWidth": 0.6 },
+        { "role": "liveTitle", "x": 0.08, "y": 0.36, "fontSize": 0.085, "color": "#FFFFFF", "align": "left", "font": "display", "maxWidth": 0.84 },
+        { "role": "streamerName", "x": 0.08, "y": 0.84, "fontSize": 0.05, "color": "#FFE2B0", "align": "left", "font": "body", "maxWidth": 0.84 }
+      ]
+    },
+    {
+      "format": "story",
+      "logo": {
+        "x": 0.2,
+        "y": 0.26,
+        "size": 0.12
+      },
+      "layers": [
+        { "role": "callToAction", "x": 0.08, "y": 0.12, "fontSize": 0.028, "color": "#F2A541", "align": "left", "font": "body", "maxWidth": 0.84 },
+        { "role": "liveTitle", "x": 0.08, "y": 0.4, "fontSize": 0.05, "color": "#FFFFFF", "align": "left", "font": "display", "maxWidth": 0.84 },
+        { "role": "streamerName", "x": 0.08, "y": 0.66, "fontSize": 0.03, "color": "#FFE2B0", "align": "left", "font": "body", "maxWidth": 0.84 }
+      ]
+    }
+  ]
+}

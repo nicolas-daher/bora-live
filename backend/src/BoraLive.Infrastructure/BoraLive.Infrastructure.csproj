@@ -15,4 +15,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Os modelos em JSON vão embutidos dentro da DLL: não dependem de caminho de pasta. -->
+    <EmbeddedResource Include="Templates/Data/**/*.json" />
+  </ItemGroup>
+
 </Project>

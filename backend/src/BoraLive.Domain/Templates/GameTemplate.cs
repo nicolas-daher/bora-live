@@ -5,24 +5,28 @@ using BoraLive.Domain.Games;
 namespace BoraLive.Domain.Templates;
 
 /// <summary>
-/// Um modelo de arte de um jogo: quais formatos ele aceita e quais textos mostra.
+/// Um modelo de arte de um jogo: o fundo, a chamada e um layout para cada formato que aceita.
 /// </summary>
 public sealed class GameTemplate
 {
     public const int MaxNameLength = 60;
+    public const int MaxCallToActionLength = 30;
 
     private GameTemplate(
         string id,
         string name,
         Game game,
-        IReadOnlyList<ArtFormat> formats,
-        IReadOnlyList<TextLayer> layers)
+        string callToAction,
+        TemplateBackground background,
+        IReadOnlyList<TemplateLayout> layouts)
     {
         Id = id;
         Name = name;
         Game = game;
-        Formats = formats;
-        Layers = layers;
+        CallToAction = callToAction;
+        Background = background;
+        Layouts = layouts;
+        Formats = layouts.Select(layout => layout.Format).ToArray();
     }
 
     /// <summary>Identificador em formato de slug (ex.: "cs2-neon").</summary>
@@ -32,22 +36,28 @@ public sealed class GameTemplate
 
     public Game Game { get; }
 
-    /// <summary>Formatos que este modelo declara aceitar.</summary>
-    public IReadOnlyList<ArtFormat> Formats { get; }
+    /// <summary>Texto fixo da chamada para a live (ex.: "tô ao vivo").</summary>
+    public string CallToAction { get; }
 
-    public IReadOnlyList<TextLayer> Layers { get; }
+    public TemplateBackground Background { get; }
+
+    public IReadOnlyList<TemplateLayout> Layouts { get; }
+
+    /// <summary>Formatos que este modelo aceita: um para cada layout declarado.</summary>
+    public IReadOnlyList<ArtFormat> Formats { get; }
 
     public static Result<GameTemplate> Create(
         string? id,
         string? name,
         Game game,
-        IEnumerable<ArtFormat> formats,
-        IEnumerable<TextLayer> layers)
+        string? callToAction,
+        TemplateBackground background,
+        IEnumerable<TemplateLayout> layouts)
     {
         // Argumento nulo aqui é erro de programação, não erro de negócio: por isso exceção.
         ArgumentNullException.ThrowIfNull(game);
-        ArgumentNullException.ThrowIfNull(formats);
-        ArgumentNullException.ThrowIfNull(layers);
+        ArgumentNullException.ThrowIfNull(background);
+        ArgumentNullException.ThrowIfNull(layouts);
 
         if (!Slug.IsValid(id))
         {
@@ -66,37 +76,40 @@ public sealed class GameTemplate
             return GameTemplateErrors.NameTooLong;
         }
 
-        // ToArray() cria uma cópia: quem chamou não consegue alterar a lista depois.
-        var formatList = formats.ToArray();
+        var trimmedCallToAction = callToAction?.Trim();
 
-        if (formatList.Length == 0)
+        if (string.IsNullOrEmpty(trimmedCallToAction))
         {
-            return GameTemplateErrors.FormatsRequired;
+            return GameTemplateErrors.CallToActionRequired;
         }
 
-        if (formatList.Distinct().Count() != formatList.Length)
+        if (trimmedCallToAction.Length > MaxCallToActionLength)
+        {
+            return GameTemplateErrors.CallToActionTooLong;
+        }
+
+        var layoutList = layouts.ToArray();
+
+        if (layoutList.Length == 0)
+        {
+            return GameTemplateErrors.LayoutsRequired;
+        }
+
+        // Um layout por formato: dois layouts de thumbnail deixariam a escolha ambígua.
+        if (layoutList.Select(layout => layout.Format).Distinct().Count() != layoutList.Length)
         {
             return GameTemplateErrors.DuplicateFormat;
         }
 
-        var layerList = layers.ToArray();
-
-        if (layerList.Length == 0)
-        {
-            return GameTemplateErrors.LayersRequired;
-        }
-
-        // Cada papel (nome, título, chamada) aparece no máximo uma vez por modelo.
-        if (layerList.Select(layer => layer.Role).Distinct().Count() != layerList.Length)
-        {
-            return GameTemplateErrors.DuplicateLayerRole;
-        }
-
-        return new GameTemplate(id!, trimmedName, game, formatList, layerList);
+        return new GameTemplate(id!, trimmedName, game, trimmedCallToAction, background, layoutList);
     }
 
     /// <summary>Diz se este modelo aceita o formato informado.</summary>
     public bool Supports(ArtFormat format) => Formats.Contains(format);
+
+    /// <summary>O layout deste modelo para o formato, ou null se ele não aceita o formato.</summary>
+    public TemplateLayout? LayoutFor(ArtFormat format) =>
+        Layouts.FirstOrDefault(layout => layout.Format == format);
 }
 
 public static class GameTemplateErrors
@@ -113,19 +126,19 @@ public static class GameTemplateErrors
         "game_template.name_too_long",
         $"O nome do modelo pode ter no máximo {GameTemplate.MaxNameLength} caracteres.");
 
-    public static readonly Error FormatsRequired = new(
-        "game_template.formats_required",
-        "O modelo precisa aceitar pelo menos um formato.");
+    public static readonly Error CallToActionRequired = new(
+        "game_template.call_to_action_required",
+        "Todo modelo precisa de um texto de chamada.");
+
+    public static readonly Error CallToActionTooLong = new(
+        "game_template.call_to_action_too_long",
+        $"A chamada do modelo pode ter no máximo {GameTemplate.MaxCallToActionLength} caracteres.");
+
+    public static readonly Error LayoutsRequired = new(
+        "game_template.layouts_required",
+        "O modelo precisa de um layout para pelo menos um formato.");
 
     public static readonly Error DuplicateFormat = new(
         "game_template.duplicate_format",
-        "O modelo está com um formato repetido.");
-
-    public static readonly Error LayersRequired = new(
-        "game_template.layers_required",
-        "O modelo precisa de pelo menos uma camada de texto.");
-
-    public static readonly Error DuplicateLayerRole = new(
-        "game_template.duplicate_layer_role",
-        "O modelo está com duas camadas de texto para a mesma informação.");
+        "O modelo está com dois layouts para o mesmo formato.");
 }
