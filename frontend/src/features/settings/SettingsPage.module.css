@@ -1,0 +1,87 @@
+.layout {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+@media (min-width: 56rem) {
+  .layout {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-12);
+  }
+}
+
+.panel {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.statusDot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background-color: var(--color-teal);
+}
+
+.masked {
+  color: var(--color-text);
+  font-family: inherit;
+  font-weight: 600;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Mensagens de retorno. O parágrafo existe sempre (para o leitor de tela);
+   só ganha aparência quando tem texto. */
+.success,
+.error {
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-raised);
+}
+
+.success {
+  border-color: var(--color-teal);
+}
+
+.error {
+  border-color: var(--color-pink);
+}
+
+.notes {
+  display: grid;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.notesTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.notesList {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: var(--space-6);
+}

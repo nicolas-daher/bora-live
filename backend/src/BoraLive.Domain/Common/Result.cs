@@ -1,6 +1,31 @@
 namespace BoraLive.Domain.Common;
 
 /// <summary>
+/// O resultado de uma operação que pode falhar por um motivo esperado
+/// e que, quando dá certo, não tem valor para devolver (ex.: "a chave é válida").
+/// </summary>
+public sealed class Result
+{
+    private static readonly Result SuccessInstance = new(null);
+
+    private Result(Error? error) => Error = error;
+
+    public bool IsSuccess => Error is null;
+
+    public bool IsFailure => !IsSuccess;
+
+    /// <summary>O erro, quando a operação falhou. Nulo em caso de sucesso.</summary>
+    public Error? Error { get; }
+
+    public static Result Success() => SuccessInstance;
+
+    public static Result Failure(Error error) => new(error);
+
+    // Permite escrever "return erro;" em um método que devolve Result.
+    public static implicit operator Result(Error error) => Failure(error);
+}
+
+/// <summary>
 /// O resultado de uma operação que pode falhar por um motivo esperado.
 /// Ou é sucesso e carrega um valor, ou é falha e carrega um <see cref="Common.Error"/>.
 /// </summary>

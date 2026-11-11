@@ -1,4 +1,13 @@
+using BoraLive.Api.Endpoints;
+using BoraLive.Api.Http;
+using BoraLive.Application.ApiKeys;
+using BoraLive.Infrastructure;
+
+const string FrontendCorsPolicy = "frontend";
+
 var builder = WebApplication.CreateBuilder(args);
+
+// ---------- Serviços (injeção de dependência) ----------
 
 // Health check nativo do ASP.NET Core: dispensa pacote extra.
 builder.Services.AddHealthChecks();
@@ -6,7 +15,36 @@ builder.Services.AddHealthChecks();
 // Gera o documento OpenAPI (a descrição da API em JSON).
 builder.Services.AddOpenApi();
 
+// Erros inesperados também saem no formato ProblemDetails.
+builder.Services.AddProblemDetails();
+
+// Infrastructure: registra o Gemini (e, mais adiante, SkiaSharp e os modelos em JSON).
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Casos de uso da Application: classes simples, sem MediatR.
+builder.Services.AddScoped<ValidateApiKeyUseCase>();
+
+// CORS: só o endereço do frontend pode chamar a API pelo navegador.
+// A lista vem da configuração (Cors:AllowedOrigins), nunca fixa no código.
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(FrontendCorsPolicy, policy => policy
+        .WithOrigins(allowedOrigins)
+        .WithMethods("GET", "POST")
+        .WithHeaders("Content-Type", ApiHeaders.GeminiApiKey));
+});
+
 var app = builder.Build();
+
+// ---------- Pipeline (a ordem importa) ----------
+
+// Converte exceções não tratadas em resposta 500 com ProblemDetails,
+// sem vazar detalhes internos para quem chamou.
+app.UseExceptionHandler();
+
+app.UseCors(FrontendCorsPolicy);
 
 // Documentação só em desenvolvimento: em produção ela não fica exposta.
 if (app.Environment.IsDevelopment())
@@ -20,5 +58,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHealthChecks("/health");
+app.MapApiKeyEndpoints();
 
 app.Run();
