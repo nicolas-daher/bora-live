@@ -26,7 +26,7 @@ public sealed class ValidateApiKeyUseCase(IAiImageGenerator aiImageGenerator)
         // Uma chave com espaço, acento ou quebra de linha nunca é válida.
         // Recusar aqui evita uma chamada à toa e impede que caracteres estranhos
         // cheguem ao header da requisição para o Gemini.
-        if (key.Length > MaxKeyLength || !key.All(IsAllowedKeyCharacter))
+        if (!IsWellFormed(key))
         {
             return ApiKeyErrors.Invalid;
         }
@@ -40,6 +40,13 @@ public sealed class ValidateApiKeyUseCase(IAiImageGenerator aiImageGenerator)
             _ => ApiKeyErrors.ProviderUnavailable,
         };
     }
+
+    /// <summary>
+    /// Confere só o formato da chave (tamanho e caracteres), sem falar com o Gemini.
+    /// Também usado antes de gerar arte, para nenhum caractere estranho chegar ao header.
+    /// </summary>
+    public static bool IsWellFormed(string key) =>
+        key.Length <= MaxKeyLength && key.All(IsAllowedKeyCharacter);
 
     private static bool IsAllowedKeyCharacter(char c) =>
         char.IsAsciiLetterOrDigit(c) || c is '-' or '_' or '.';

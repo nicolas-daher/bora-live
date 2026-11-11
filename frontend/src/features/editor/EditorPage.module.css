@@ -47,6 +47,24 @@
   color: var(--color-teal);
 }
 
+/* Aviso: a arte saiu, mas a IA não rolou. Laranja = atenção, sem ser erro. */
+.warning {
+  color: var(--color-orange);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 5rem;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  resize: vertical;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;

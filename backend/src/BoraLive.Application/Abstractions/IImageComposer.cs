@@ -11,9 +11,10 @@ public interface IImageComposer
 {
     /// <summary>
     /// Desenha a arte e devolve o PNG.
-    /// Falha com erro de negócio quando o logo enviado não é uma imagem que dê para abrir.
+    /// Falha com erro de negócio quando o logo ou o fundo enviados não são imagens que dê para abrir.
     /// </summary>
     /// <param name="request">O pedido, já validado pelo Domain.</param>
     /// <param name="logo">Bytes do logo do streamer, ou null quando não houver.</param>
-    Result<byte[]> Compose(ArtRequest request, byte[]? logo);
+    /// <param name="background">Bytes do fundo gerado pela IA, ou null para usar o degradê do modelo.</param>
+    Result<byte[]> Compose(ArtRequest request, byte[]? logo, byte[]? background);
 }

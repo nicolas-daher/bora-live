@@ -41,7 +41,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(FrontendCorsPolicy, policy => policy
         .WithOrigins(allowedOrigins)
         .WithMethods("GET", "POST")
-        .WithHeaders("Content-Type", ApiHeaders.GeminiApiKey));
+        .WithHeaders("Content-Type", ApiHeaders.GeminiApiKey)
+        // Sem isto o navegador esconde o header do aviso do JavaScript.
+        .WithExposedHeaders(ApiHeaders.BoraWarning));
 });
 
 var app = builder.Build();

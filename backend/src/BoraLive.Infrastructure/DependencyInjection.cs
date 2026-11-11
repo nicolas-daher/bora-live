@@ -27,7 +27,9 @@ public static class DependencyInjection
             var options = serviceProvider.GetRequiredService<IOptions<GeminiOptions>>().Value;
 
             client.BaseAddress = new Uri(options.BaseUrl);
-            client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+            // O HttpClient tem um único tempo limite; fica com o maior (geração de imagem).
+            // O GeminiImageGenerator aplica o limite menor na validação da chave.
+            client.Timeout = TimeSpan.FromSeconds(Math.Max(options.TimeoutSeconds, options.ImageTimeoutSeconds));
         });
 
         // Singleton: os modelos são lidos uma vez e reaproveitados por todas as requisições.

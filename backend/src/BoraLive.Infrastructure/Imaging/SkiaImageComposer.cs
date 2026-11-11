@@ -22,7 +22,13 @@ public sealed class SkiaImageComposer : IImageComposer
     /// <summary>Distância entre linhas, em relação ao tamanho da fonte.</summary>
     private const float LineHeight = 1.15f;
 
-    public Result<byte[]> Compose(ArtRequest request, byte[]? logo)
+    /// <summary>Maior largura ou altura aceita para o fundo gerado pela IA.</summary>
+    private const int MaxBackgroundDimension = 8192;
+
+    /// <summary>Opacidade da película escura sobre o fundo da IA (0 a 255): garante contraste para o texto.</summary>
+    private const byte BackgroundScrimAlpha = 110;
+
+    public Result<byte[]> Compose(ArtRequest request, byte[]? logo, byte[]? background)
     {
         var format = request.Format;
 
@@ -35,11 +41,26 @@ public sealed class SkiaImageComposer : IImageComposer
         using var surface = SKSurface.Create(new SKImageInfo(format.Width, format.Height));
         var canvas = surface.Canvas;
 
-        DrawBackground(canvas, format, request.Template.Background);
+        if (background is not null)
+        {
+            using var backgroundImage = DecodeImage(background, MaxBackgroundDimension);
+
+            if (backgroundImage is null)
+            {
+                // Quem chamou desenha de novo sem o fundo (degradê) e avisa a pessoa.
+                return ArtErrors.AiUnavailable;
+            }
+
+            DrawImageBackground(canvas, format, backgroundImage);
+        }
+        else
+        {
+            DrawBackground(canvas, format, request.Template.Background);
+        }
 
         if (logo is not null)
         {
-            using var logoImage = DecodeLogo(logo);
+            using var logoImage = DecodeImage(logo, MaxLogoDimension);
 
             if (logoImage is null)
             {
@@ -96,10 +117,36 @@ public sealed class SkiaImageComposer : IImageComposer
         canvas.DrawRect(0, 0, format.Width, format.Height, paint);
     }
 
+    /// <summary>
+    /// Desenha a imagem da IA cobrindo a arte inteira ("cover"): escala até preencher e corta o que sobra,
+    /// centralizado. Depois escurece de leve, porque a IA não sabe onde o texto vai ficar.
+    /// </summary>
+    private static void DrawImageBackground(SKCanvas canvas, ArtFormat format, SKImage image)
+    {
+        var scale = Math.Max((float)format.Width / image.Width, (float)format.Height / image.Height);
+
+        // Parte da imagem original que cabe na arte, depois de escalada.
+        var sourceWidth = format.Width / scale;
+        var sourceHeight = format.Height / scale;
+        var source = SKRect.Create(
+            (image.Width - sourceWidth) / 2,
+            (image.Height - sourceHeight) / 2,
+            sourceWidth,
+            sourceHeight);
+
+        var destination = SKRect.Create(0, 0, format.Width, format.Height);
+        var sampling = new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear);
+
+        canvas.DrawImage(image, source, destination, sampling);
+
+        using var scrim = new SKPaint { Color = new SKColor(0, 0, 0, BackgroundScrimAlpha) };
+        canvas.DrawRect(destination, scrim);
+    }
+
     // ---------- Logo ----------
 
-    /// <summary>Abre o logo. Devolve null se o arquivo não for uma imagem aceita.</summary>
-    private static SKImage? DecodeLogo(byte[] bytes)
+    /// <summary>Abre uma imagem. Devolve null se o arquivo não for uma imagem aceita.</summary>
+    private static SKImage? DecodeImage(byte[] bytes, int maxDimension)
     {
         using var data = SKData.CreateCopy(bytes);
         using var codec = SKCodec.Create(data);
@@ -108,8 +155,8 @@ public sealed class SkiaImageComposer : IImageComposer
         // um arquivo pequeno pode declarar uma imagem gigante para esgotar a memória.
         if (codec is null
             || codec.EncodedFormat is not (SKEncodedImageFormat.Png or SKEncodedImageFormat.Jpeg or SKEncodedImageFormat.Webp)
-            || codec.Info.Width is < 1 or > MaxLogoDimension
-            || codec.Info.Height is < 1 or > MaxLogoDimension)
+            || codec.Info.Width < 1 || codec.Info.Width > maxDimension
+            || codec.Info.Height < 1 || codec.Info.Height > maxDimension)
         {
             return null;
         }

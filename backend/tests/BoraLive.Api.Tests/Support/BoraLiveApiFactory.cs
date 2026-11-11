@@ -62,7 +62,25 @@ public sealed class FakeGeminiHandler : HttpMessageHandler
 
     public int Calls { get; private set; }
 
-    protected override Task<HttpResponseMessage> SendAsync(
+    /// <summary>Corpo JSON da resposta. Nulo = resposta sem corpo (basta para validar a chave).</summary>
+    public string? ResponseJson { get; set; }
+
+    /// <summary>Corpo da última requisição recebida (o pedido de geração de imagem).</summary>
+    public string? LastRequestBody { get; private set; }
+
+    /// <summary>Volta ao estado inicial, para um teste não herdar a configuração do anterior.</summary>
+    public void Reset()
+    {
+        StatusToReturn = HttpStatusCode.OK;
+        ExceptionToThrow = null;
+        ResponseJson = null;
+        LastRequestBody = null;
+        LastRequestUri = null;
+        LastApiKeyHeader = null;
+        Calls = 0;
+    }
+
+    protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
@@ -71,13 +89,21 @@ public sealed class FakeGeminiHandler : HttpMessageHandler
         LastApiKeyHeader = request.Headers.TryGetValues(GeminiImageGenerator.ApiKeyHeader, out var values)
             ? string.Join(",", values)
             : null;
+        LastRequestBody = request.Content is null ? null : await request.Content.ReadAsStringAsync(cancellationToken);
 
         if (ExceptionToThrow is not null)
         {
             throw ExceptionToThrow;
         }
 
-        return Task.FromResult(new HttpResponseMessage(StatusToReturn));
+        var response = new HttpResponseMessage(StatusToReturn);
+
+        if (ResponseJson is not null)
+        {
+            response.Content = new StringContent(ResponseJson, System.Text.Encoding.UTF8, "application/json");
+        }
+
+        return response;
     }
 
     // O HttpClientFactory descarta os handlers de tempos em tempos.

@@ -20,6 +20,8 @@ public static class ArtEndpoints
             // CSRF explora cookies de login, e esta API não tem login nem cookies:
             // a proteção não se aplica, então fica desligada neste endpoint.
             .DisableAntiforgery()
+            // Com prompt e chave, o fundo vem do Gemini. Se a IA falhar, o PNG vem com degradê
+            // e o header X-Bora-Warning diz o motivo.
             .Produces(StatusCodes.Status200OK, contentType: "image/png")
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -35,7 +37,11 @@ public static class ArtEndpoints
         [FromForm] string? format,
         [FromForm] string? streamerName,
         [FromForm] string? liveTitle,
+        [FromForm] string? prompt,
         IFormFile? logo,
+        // A chave do Gemini vem no header e é repassada ao caso de uso. Nunca é guardada nem logada.
+        [FromHeader(Name = ApiHeaders.GeminiApiKey)] string? apiKey,
+        HttpResponse httpResponse,
         GenerateArtUseCase useCase,
         CancellationToken cancellationToken)
     {
@@ -50,13 +56,24 @@ public static class ArtEndpoints
             format,
             streamerName,
             liveTitle,
-            await ReadAllBytesAsync(logo, cancellationToken));
+            await ReadAllBytesAsync(logo, cancellationToken),
+            prompt,
+            apiKey);
 
         var result = await useCase.ExecuteAsync(input, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.File(result.Value.Png, "image/png", result.Value.FileName)
-            : result.Error!.ToProblem();
+        if (result.IsFailure)
+        {
+            return result.Error!.ToProblem();
+        }
+
+        // A arte saiu, mas a IA não rolou: avisa pelo header em vez de falhar a requisição.
+        if (result.Value.AiWarning is { } warning)
+        {
+            httpResponse.Headers[ApiHeaders.BoraWarning] = warning.Code;
+        }
+
+        return Results.File(result.Value.Png, "image/png", result.Value.FileName);
     }
 
     private static async Task<byte[]?> ReadAllBytesAsync(IFormFile? file, CancellationToken cancellationToken)

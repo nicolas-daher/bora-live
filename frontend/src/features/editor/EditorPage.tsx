@@ -1,6 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { generateArt } from '../../shared/api/art.ts'
+import { generateArt, warningMessage } from '../../shared/api/art.ts'
+import { getApiKey } from '../../shared/api/apiKeyStorage.ts'
 import { listFormats, listTemplates, type ArtFormat, type Template } from '../../shared/api/catalog.ts'
 import { paths } from '../../shared/paths.ts'
 import { Button } from '../../shared/ui/Button.tsx'
@@ -11,6 +12,7 @@ import styles from './EditorPage.module.css'
 // Mesmos limites do Domain (backend). A API continua sendo quem valida de verdade.
 const MAX_STREAMER_NAME = 25
 const MAX_LIVE_TITLE = 60
+const MAX_AI_PROMPT = 500
 const MAX_LOGO_BYTES = 2 * 1024 * 1024
 
 /** Passo 2: formulário à esquerda, prévia (o PNG real da API) à direita. */
@@ -25,10 +27,13 @@ export function EditorPage() {
   const [streamerName, setStreamerName] = useState('')
   const [liveTitle, setLiveTitle] = useState('')
   const [logo, setLogo] = useState<File | null>(null)
+  const [prompt, setPrompt] = useState('')
 
   const [artUrl, setArtUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Aviso (não é erro): a arte saiu, mas a IA não rolou e o fundo é o degradê.
+  const [warning, setWarning] = useState<string | null>(null)
 
   // Carrega formatos e modelos do jogo; só ficam os modelos que aceitam o formato escolhido.
   useEffect(() => {
@@ -80,9 +85,11 @@ export function EditorPage() {
   async function generate() {
     setLoading(true)
     setError(null)
+    setWarning(null)
     try {
-      const blob = await generateArt({ templateId, format: formatKey!, streamerName, liveTitle, logo })
-      setArtUrl(URL.createObjectURL(blob))
+      const art = await generateArt({ templateId, format: formatKey!, streamerName, liveTitle, logo, prompt })
+      setArtUrl(URL.createObjectURL(art.png))
+      setWarning(art.warning ? warningMessage(art.warning) : null)
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -98,6 +105,8 @@ export function EditorPage() {
     link.click()
   }
 
+  const usesAi = prompt.trim() !== ''
+  const hasKey = getApiKey() !== null
   const canGenerate = !loading && templateId !== '' && streamerName.trim() !== '' && liveTitle.trim() !== ''
 
   return (
@@ -138,6 +147,25 @@ export function EditorPage() {
               ))}
             </select>
           </label>
+          <label className={styles.label}>
+            Fundo com IA (opcional)
+            <textarea
+              className={styles.textarea}
+              maxLength={MAX_AI_PROMPT}
+              value={prompt}
+              placeholder="Ex.: pôr do sol neon sobre uma cidade, estilo cyberpunk"
+              onChange={(e) => setPrompt(e.target.value)}
+            />
+            <span className={styles.hint}>
+              {hasKey ? (
+                'O Gemini desenha o fundo com a sua chave. Sem descrição, usa o degradê do modelo. Não precisa pedir texto nem logo: isso a gente coloca.'
+              ) : (
+                <>
+                  Pra usar a IA, cola a sua chave do Gemini nas <Link to={paths.settings}>configurações</Link>.
+                </>
+              )}
+            </span>
+          </label>
 
           {error && (
             <p className={styles.error} role="alert">
@@ -147,7 +175,7 @@ export function EditorPage() {
 
           <div className={styles.actions}>
             <Button type="submit" disabled={!canGenerate}>
-              {loading ? 'Gerando…' : 'Bora gerar'}
+              {loading ? (usesAi ? 'Gerando com IA…' : 'Gerando…') : 'Bora gerar'}
             </Button>
             <Button variant="secondary" disabled={!artUrl} onClick={download}>
               Baixar PNG
@@ -163,7 +191,13 @@ export function EditorPage() {
           >
             {artUrl ? <img src={artUrl} alt="Prévia da arte gerada" /> : <p>A prévia aparece aqui.</p>}
           </div>
-          {artUrl && !error && <p className={styles.success}>Partiu live! Sua arte tá pronta.</p>}
+          {loading && usesAi && <p className={styles.hint}>A IA pode levar uns segundinhos. Já já tá pronto!</p>}
+          {artUrl && !error && !warning && <p className={styles.success}>Partiu live! Sua arte tá pronta.</p>}
+          {artUrl && !error && warning && (
+            <p className={styles.warning} role="status">
+              {warning}
+            </p>
+          )}
         </div>
       </div>
     </Page>
