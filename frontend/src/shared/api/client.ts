@@ -27,6 +27,8 @@ export class ApiError extends Error {
 
 type RequestOptions = {
   method?: 'GET' | 'POST'
+  /** Corpo da requisição. FormData vira multipart/form-data (o navegador define o Content-Type sozinho). */
+  body?: FormData
   /** Chave a enviar. Sem ela, usa a que estiver salva no navegador. */
   apiKey?: string
 }
@@ -43,7 +45,7 @@ export async function apiRequest(path: string, options: RequestOptions = {}): Pr
   let response: Response
 
   try {
-    response = await fetch(`${API_URL}${path}`, { method: options.method ?? 'GET', headers })
+    response = await fetch(`${API_URL}${path}`, { method: options.method ?? 'GET', headers, body: options.body })
   } catch {
     // fetch só lança quando a requisição nem chegou: servidor fora do ar, sem internet.
     throw new ApiError('Não deu pra falar com o servidor do Bora Live. Tenta de novo daqui a pouco?', 0, 'network')
