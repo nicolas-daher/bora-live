@@ -246,7 +246,7 @@ frontend/src/
 
 ## Estado atual (atualizado em 2026-11-11)
 
-**Etapas 1 a 6 concluídas, commitadas e com CI verde** (último commit: `ba6255f`). **Próxima: etapa 7.**
+**Etapas 1 a 8 concluídas.** Etapas 1 a 7 commitadas (último commit: `44b241a`); a 8 foi testada de ponta a ponta com chave real do Gemini. **Próxima: etapa 9 (deploy).**
 
 ### Combinados de trabalho
 - O dono do projeto **roda os comandos git**: eu passo os blocos bash e confiro depois (git/API do GitHub). Não commito nem dou push.
@@ -254,44 +254,34 @@ frontend/src/
 - Commits em Conventional Commits, descrição em português.
 - Não deixar a API rodando em background antes de buildar (trava o `BoraLive.Api.exe`).
 
-### Backend (pronto até a etapa 6)
-- Solution `backend/BoraLive.slnx`, .NET 10, Clean Architecture com testes de arquitetura (reflexão) em Domain.Tests e Application.Tests. 175 testes (Domain 109, Application 31, Api 35).
+### Backend (pronto até a etapa 8)
+- Solution `backend/BoraLive.slnx`, .NET 10, Clean Architecture com testes de arquitetura (reflexão) em Domain.Tests e Application.Tests. 202 testes (Domain 109, Application 41, Api 52).
 - Padrões: `Result<T>`/`Result` com `Error(Code, Message)`, Factory Method com construtor privado, Smart Enum (`ArtFormat`), Value Objects em records.
 - Endpoints (Minimal APIs, erros em `ProblemDetails` com campo extra `code`):
   - `GET /health`
   - `POST /api/key/validate` (header `X-Gemini-Api-Key`) → 204 válida / 400 formato / 401 inválida / 503 Gemini indisponível
   - `GET /api/games`, `GET /api/templates?game=`, `GET /api/formats`
-  - `POST /api/art` (multipart/form-data: `templateId`, `format`, `streamerName`, `liveTitle`, `logo` opcional) → `image/png` com nome sugerido `bora-live-{templateId}-{format}.png`. Erros: 400 (`art_request.*`, `art_format.unknown`, `art.logo_invalid`), 404 (`art.template_not_found`), 413 (`art.logo_too_large`, logo máx. 2 MB).
+  - `POST /api/art` (multipart/form-data: `templateId`, `format`, `streamerName`, `liveTitle`, `logo` e `prompt` opcionais; chave no header `X-Gemini-Api-Key`) → `image/png` com nome sugerido `bora-live-{templateId}-{format}.png`. Erros: 400 (`art_request.*`, `art_format.unknown`, `art.logo_invalid`), 404 (`art.template_not_found`), 413 (`art.logo_too_large`, logo máx. 2 MB).
+  - **Fundo com IA:** só roda com `prompt` preenchido. Se a IA falhar (sem chave, chave inválida, cota, fora do ar, conteúdo recusado), a resposta continua 200 com o degradê e o header `X-Bora-Warning` traz o código (`api_key.missing`, `api_key.invalid`, `art.ai_unavailable`, `art.ai_rejected`); o front mostra a mensagem em português. O header é exposto no CORS.
+- `GeminiImageGenerator`: `generateContent` com `responseModalities: ["IMAGE"]`; modelo em `Gemini:ImageModel` (padrão `gemini-2.5-flash-image`); timeouts `TimeoutSeconds` (validar chave, 15) e `ImageTimeoutSeconds` (gerar, 90). A proporção pedida é a mais próxima das suportadas (banner 2,5:1 usa 21:9 e o Skia corta). Falhas são logadas com status HTTP e motivo do Gemini, nunca a chave.
+- O prompt enviado à IA é montado no `GenerateArtUseCase`: estilo do jogo, sem texto, sem logo, sem arte oficial.
 - Limites do Domain: nome do streamer 25 caracteres, título da live 60, prompt de IA 500.
 - Modelos em JSON embutidos: `games.json` e `templates/{cs2-tatico, cs2-rush, valorant-clutch, valorant-ace}.json`. Cada modelo define seu próprio layout por formato (`thumbnail`, `banner`, `post`, `story`).
-- Composição com SkiaSharp (`SkiaImageComposer`): fundo em degradê, logo encaixado em quadrado, textos que quebram linha, encolhem (até 45%) e cortam com reticências. Fontes Unbounded/Inter embutidas (OFL).
+- Composição com SkiaSharp (`SkiaImageComposer`): fundo em degradê (ou imagem da IA em "cover" com película escura para contraste), logo encaixado em quadrado, textos que quebram linha, encolhem (até 45%) e cortam com reticências. Fontes Unbounded/Inter embutidas (OFL).
 - Swagger em `/swagger` (só Development). CORS por `Cors:AllowedOrigins`.
 - Segurança da chave comprovada por testes (header, nunca em URL, log ou resposta).
 - CI: `.github/workflows/backend.yml` e `frontend.yml` (com filtro `paths`).
 
-### Frontend (pronto até a etapa 5)
+### Frontend (pronto até a etapa 8)
 - React 19, TypeScript, Vite, react-router, CSS Modules, tokens em `src/shared/styles/tokens.css`.
-- Pronto: layout/navegação, Início (`HomePage`, `ExampleArt`), Configurações completa, Sobre, 404.
-- `shared/api/client.ts` (`apiRequest`, `ApiError`, `VITE_API_URL`, padrão `http://localhost:8080`), `apiKey.ts`, `apiKeyStorage.ts`.
-- **Esqueletos a preencher na etapa 7:** `features/game-selection/GameSelectionPage` (rota `/criar`) e `features/editor/EditorPage` (rota `/editor`).
+- Pronto: layout/navegação, Início (`HomePage`, `ExampleArt`), Configurações completa, Sobre, 404, seleção de formato e jogo, editor com prévia (o PNG real da API), download em PNG e campo "Fundo com IA" com aviso quando a IA não rolou.
+- `shared/api/`: `client.ts` (`apiRequest`, `ApiError`, `VITE_API_URL`, padrão `http://localhost:8080`), `apiKey.ts`, `apiKeyStorage.ts`, `catalog.ts`, `art.ts` (`generateArt` devolve `{ png, warning }`; `warningMessage` traduz o código).
 - A lista de formatos da Home está fixa no código; trocar por `/api/formats`.
 
 ### Como rodar
 - `docker compose up` (backend 8080, frontend 5173). O frontend no Docker não tem hot reload: para desenvolver, `npm run dev` em `frontend/` com o backend rodando (`dotnet run` em `backend/src/BoraLive.Api`).
 
 ### Próximos passos
-
-**Etapa 7 — Seleção, editor, prévia e download (só frontend; o backend já está pronto).**
-1. Apresentar o plano e decidir com o dono do projeto:
-   - Prévia: HTML/CSS no cliente (instantânea, mas pode divergir do PNG) **ou** chamadas ao `POST /api/art` com debounce (fiel ao resultado final) **ou** prévia por clique em "Bora gerar".
-   - Estado entre telas: query string/`state` do React Router **ou** contexto React.
-2. Em `shared/api`: funções para `/api/formats`, `/api/games`, `/api/templates` e `/api/art` (multipart; resposta em `Blob`). Componentes nunca chamam `fetch` direto.
-3. Tela "Escolher formato e jogo": cards de formato + grade de jogos só com o nome em texto (sem logo oficial).
-4. Editor: formulário (nome do streamer, título da live, upload de logo com aviso do limite de 2 MB, escolha do modelo) e prévia à direita; botões "Bora gerar" e "Baixar PNG"; mensagens no tom do Bora Live ("Partiu live! Sua arte tá pronta."). Prompt de IA fica para a etapa 8.
-5. Respeitar os limites do Domain no formulário (25 e 60 caracteres) e tratar os códigos de erro da API.
-6. Avisar que emoji não é desenhado (as fontes não têm emoji; vira quadradinho).
-
-**Etapa 8 — Gemini para gerar fundo.** Estender `IAiImageGenerator` com geração de imagem; `/api/art` passa a aceitar `prompt` opcional e a chave no header; sem chave, continua o fundo em degradê. Nome do modelo do Gemini em configuração.
 
 **Etapa 9 — Deploy.** Cloudflare Pages (frontend) + host do backend (a decidir), CORS de produção, README com manual de uso, aviso de que o projeto não é oficial nem comercial e não tem vínculo com as empresas dos jogos (texto sugerido para a Riot).
 
@@ -300,3 +290,5 @@ frontend/src/
 - A chave fica no `localStorage`, legível por scripts da própria página (aceito no MVP).
 - `frontend/Dockerfile` é de desenvolvimento.
 - Valve não tem política pública de conteúdo de fãs: por isso nenhum logo de jogo.
+- Gerar imagem no Gemini exige cota paga: chave do plano gratuito costuma dar `429 RESOURCE_EXHAUSTED` (a arte sai com o degradê e o aviso). Confirmado em 2026-11-11 com faturamento ativo.
+- O nome do modelo de imagem (`gemini-2.5-flash-image`) pode mudar: se a IA parar de responder, conferir o log (`HTTP 404`) e a documentação oficial.
