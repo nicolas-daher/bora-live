@@ -21,21 +21,21 @@
       },
       "layers": [
         { "role": "callToAction", "x": 0.5, "y": 0.36, "fontSize": 0.05, "color": "#7A1323", "align": "center", "font": "body", "maxWidth": 0.8 },
-        { "role": "liveTitle", "x": 0.5, "y": 0.46, "fontSize": 0.11, "color": "#111823", "align": "center", "font": "display", "maxWidth": 0.8 },
-        { "role": "streamerName", "x": 0.5, "y": 0.84, "fontSize": 0.065, "color": "#111823", "align": "center", "font": "body", "maxWidth": 0.8 }
+        { "role": "liveTitle", "x": 0.5, "y": 0.44, "fontSize": 0.095, "color": "#111823", "align": "center", "font": "display", "maxWidth": 0.8 },
+        { "role": "streamerName", "x": 0.5, "y": 0.86, "fontSize": 0.065, "color": "#111823", "align": "center", "font": "body", "maxWidth": 0.8 }
       ]
     },
     {
       "format": "banner",
       "logo": {
-        "x": 0.1,
+        "x": 0.13,
         "y": 0.5,
-        "size": 0.5
+        "size": 0.46
       },
       "layers": [
-        { "role": "callToAction", "x": 0.5, "y": 0.1, "fontSize": 0.08, "color": "#7A1323", "align": "center", "font": "body", "maxWidth": 0.6 },
-        { "role": "liveTitle", "x": 0.5, "y": 0.28, "fontSize": 0.16, "color": "#111823", "align": "center", "font": "display", "maxWidth": 0.6 },
-        { "role": "streamerName", "x": 0.5, "y": 0.76, "fontSize": 0.1, "color": "#111823", "align": "center", "font": "body", "maxWidth": 0.6 }
+        { "role": "callToAction", "x": 0.58, "y": 0.1, "fontSize": 0.07, "color": "#7A1323", "align": "center", "font": "body", "maxWidth": 0.6 },
+        { "role": "liveTitle", "x": 0.58, "y": 0.26, "fontSize": 0.13, "color": "#111823", "align": "center", "font": "display", "maxWidth": 0.6 },
+        { "role": "streamerName", "x": 0.58, "y": 0.8, "fontSize": 0.085, "color": "#111823", "align": "center", "font": "body", "maxWidth": 0.6 }
       ]
     },
     {

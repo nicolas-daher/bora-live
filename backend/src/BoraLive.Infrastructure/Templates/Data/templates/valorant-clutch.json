@@ -28,14 +28,14 @@
     {
       "format": "banner",
       "logo": {
-        "x": 0.9,
+        "x": 0.87,
         "y": 0.5,
-        "size": 0.5
+        "size": 0.46
       },
       "layers": [
-        { "role": "callToAction", "x": 0.05, "y": 0.12, "fontSize": 0.08, "color": "#FF8A96", "align": "left", "font": "body", "maxWidth": 0.5 },
-        { "role": "liveTitle", "x": 0.05, "y": 0.3, "fontSize": 0.17, "color": "#ECE8E1", "align": "left", "font": "display", "maxWidth": 0.6 },
-        { "role": "streamerName", "x": 0.05, "y": 0.76, "fontSize": 0.1, "color": "#FFFFFF", "align": "left", "font": "body", "maxWidth": 0.6 }
+        { "role": "callToAction", "x": 0.05, "y": 0.1, "fontSize": 0.07, "color": "#FF8A96", "align": "left", "font": "body", "maxWidth": 0.5 },
+        { "role": "liveTitle", "x": 0.05, "y": 0.26, "fontSize": 0.13, "color": "#ECE8E1", "align": "left", "font": "display", "maxWidth": 0.6 },
+        { "role": "streamerName", "x": 0.05, "y": 0.8, "fontSize": 0.085, "color": "#FFFFFF", "align": "left", "font": "body", "maxWidth": 0.6 }
       ]
     },
     {

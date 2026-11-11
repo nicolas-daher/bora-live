@@ -1,5 +1,6 @@
 using BoraLive.Application.Abstractions;
 using BoraLive.Infrastructure.Gemini;
+using BoraLive.Infrastructure.Imaging;
 using BoraLive.Infrastructure.Templates;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,9 @@ public static class DependencyInjection
 
         // Singleton: os modelos são lidos uma vez e reaproveitados por todas as requisições.
         services.AddSingleton<ITemplateRepository, JsonTemplateRepository>();
+
+        // Singleton: o compositor não guarda estado entre uma arte e outra.
+        services.AddSingleton<IImageComposer, SkiaImageComposer>();
 
         return services;
     }

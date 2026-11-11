@@ -1,6 +1,7 @@
 using BoraLive.Api.Endpoints;
 using BoraLive.Api.Http;
 using BoraLive.Application.ApiKeys;
+using BoraLive.Application.Art;
 using BoraLive.Application.Formats;
 using BoraLive.Application.Games;
 using BoraLive.Application.Templates;
@@ -21,7 +22,7 @@ builder.Services.AddOpenApi();
 // Erros inesperados também saem no formato ProblemDetails.
 builder.Services.AddProblemDetails();
 
-// Infrastructure: registra o Gemini e os modelos em JSON (e, mais adiante, o SkiaSharp).
+// Infrastructure: registra o Gemini, os modelos em JSON e o compositor de imagem.
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Casos de uso da Application: classes simples, sem MediatR.
@@ -29,6 +30,7 @@ builder.Services.AddScoped<ValidateApiKeyUseCase>();
 builder.Services.AddScoped<ListGamesUseCase>();
 builder.Services.AddScoped<ListTemplatesUseCase>();
 builder.Services.AddScoped<ListFormatsUseCase>();
+builder.Services.AddScoped<GenerateArtUseCase>();
 
 // CORS: só o endereço do frontend pode chamar a API pelo navegador.
 // A lista vem da configuração (Cors:AllowedOrigins), nunca fixa no código.
@@ -66,5 +68,6 @@ if (app.Environment.IsDevelopment())
 app.MapHealthChecks("/health");
 app.MapApiKeyEndpoints();
 app.MapCatalogEndpoints();
+app.MapArtEndpoints();
 
 app.Run();

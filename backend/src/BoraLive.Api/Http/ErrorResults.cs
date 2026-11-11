@@ -1,4 +1,5 @@
 using BoraLive.Application.ApiKeys;
+using BoraLive.Application.Art;
 using BoraLive.Application.Templates;
 using BoraLive.Domain.Common;
 
@@ -17,6 +18,8 @@ public static class ErrorResults
         [ApiKeyErrors.Invalid.Code] = StatusCodes.Status401Unauthorized,
         [ApiKeyErrors.ProviderUnavailable.Code] = StatusCodes.Status503ServiceUnavailable,
         [TemplateErrors.GameNotFound.Code] = StatusCodes.Status404NotFound,
+        [ArtErrors.TemplateNotFound.Code] = StatusCodes.Status404NotFound,
+        [ArtErrors.LogoTooLarge.Code] = StatusCodes.Status413PayloadTooLarge,
     };
 
     public static IResult ToProblem(this Error error)
