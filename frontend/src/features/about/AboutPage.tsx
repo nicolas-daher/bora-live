@@ -24,8 +24,8 @@ export function AboutPage() {
           <h2 className={styles.blockTitle}>Não é oficial nem comercial</h2>
           <p>
             O projeto não tem vínculo com a Valve, com a Riot Games nem com nenhuma outra empresa
-            dos jogos citados. Os nomes e logos dos jogos pertencem aos seus donos e aparecem só pra
-            identificar os modelos.
+            dos jogos citados. Os nomes dos jogos pertencem aos seus donos e aparecem só em texto, pra
+            identificar os modelos. O Bora Live não usa logos, personagens nem artes oficiais.
           </p>
         </Card>
 

@@ -87,7 +87,7 @@ Contas de usuário, login, banco de dados de usuários, histórico salvo no serv
 ## Telas
 
 1. **Início** — apresentação curta do Bora Live, exemplo de arte gerada e botão "Bora criar".
-2. **Escolher formato e jogo** — cards de formato (thumbnail, banner, post ao vivo, story) e grade de jogos. O logo do jogo só identifica a opção.
+2. **Escolher formato e jogo** — cards de formato (thumbnail, banner, post ao vivo, story) e grade de jogos. Cada jogo é identificado só pelo nome em texto, sem logo oficial.
 3. **Editor** — à esquerda, formulário (nome do streamer, título da live, upload do logo, escolha do modelo, prompt opcional para a IA); à direita, prévia em tempo real. Botões "Bora gerar" e "Baixar PNG".
 4. **Configurações** — campo para colar a chave do Gemini, botão "Testar chave", botão "Remover chave" e um texto claro explicando que a chave não é salva no servidor.
 5. **Sobre** — o que é o projeto, aviso de que não é oficial nem comercial, link para o GitHub e licença.
@@ -211,7 +211,7 @@ frontend/src/
 ## Direitos de imagem dos jogos
 
 - Logos e artes oficiais têm dono. Consultar a política de conteúdo de fãs de cada empresa (Valve, Riot etc.) antes de adicionar um jogo.
-- Usar o logo do jogo **só** para identificar a opção na seleção.
+- **Não usar logo oficial de nenhum jogo.** Na seleção, o jogo é identificado só pelo nome em texto (decisão de 2026-11-11: a Riot permite projetos de fãs não comerciais, mas a Valve não tem política pública equivalente).
 - Gerar imagens "no estilo" do jogo; não copiar personagens, mapas ou artes oficiais nos modelos.
 - README deve dizer que o projeto não é oficial, não é comercial e não tem vínculo com as empresas dos jogos.
 

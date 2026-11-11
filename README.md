@@ -103,7 +103,7 @@ npm run dev
 
 ## Aviso
 
-O Bora Live é um projeto **pessoal, não oficial e não comercial**. Ele **não tem vínculo** com Valve, Riot Games nem com nenhuma outra empresa dos jogos citados. Os nomes e logos dos jogos pertencem aos seus donos e são usados só para identificar as opções de modelo.
+O Bora Live é um projeto **pessoal, não oficial e não comercial**. Ele **não tem vínculo** com Valve, Riot Games nem com nenhuma outra empresa dos jogos citados. Os nomes dos jogos pertencem aos seus donos e aparecem só em texto, para identificar os modelos. O projeto não usa logos, personagens, mapas nem artes oficiais.
 
 ## Licença
 
