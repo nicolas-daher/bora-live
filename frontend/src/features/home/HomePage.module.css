@@ -1,0 +1,145 @@
+.home {
+  display: grid;
+  gap: var(--space-16);
+  padding-block: var(--space-12) var(--space-16);
+}
+
+/* ---------- Abertura ---------- */
+
+.hero {
+  display: grid;
+  gap: var(--space-8);
+  align-items: center;
+}
+
+/* Em telas largas, texto e arte ficam lado a lado. */
+@media (min-width: 56rem) {
+  .hero {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--space-12);
+  }
+}
+
+.heroText {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.heroTitle {
+  font-size: var(--text-hero);
+}
+
+.heroLead {
+  max-width: 34rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* ---------- Seções ---------- */
+
+.section {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.sectionTitle {
+  max-width: 40rem;
+  font-size: var(--text-xl);
+}
+
+/* ---------- Passos ---------- */
+
+.steps {
+  display: grid;
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+@media (min-width: 48rem) {
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+}
+
+.step {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  padding-top: var(--space-4);
+  border-top: 2px solid var(--color-border);
+  counter-increment: step;
+}
+
+/* O número do passo vem do contador do CSS, não do texto. */
+.step::before {
+  content: counter(step);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-orange);
+}
+
+.stepTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.stepText {
+  color: var(--color-text-muted);
+}
+
+/* ---------- Formatos ---------- */
+
+.formats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-8) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 48rem) {
+  .formats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Área de altura fixa: as quatro molduras se alinham pela base. */
+.frameArea {
+  display: flex;
+  align-items: flex-end;
+  height: 9rem;
+  margin-bottom: var(--space-3);
+}
+
+.frame {
+  /* --ratio é largura dividida por altura. A moldura tem 9rem de altura
+     quando cabe; se a coluna for estreita, encolhe mantendo a proporção. */
+  width: min(100%, calc(9rem * var(--ratio)));
+  aspect-ratio: var(--ratio);
+  border: 2px solid var(--color-teal);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+}
+
+.formatName {
+  font-weight: 600;
+}
+
+.formatMeta {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}

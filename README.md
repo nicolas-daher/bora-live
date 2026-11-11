@@ -46,7 +46,7 @@ O Bora Live não paga API de IA. Para gerar imagens, você usa a sua chave do Ge
 
 | Parte | Stack |
 |---|---|
-| Frontend | React, TypeScript e Vite, hospedado no Cloudflare Pages |
+| Frontend | React, TypeScript, Vite e React Router, hospedado no Cloudflare Pages |
 | Backend | C# e ASP.NET Core (.NET 10, Minimal APIs), com Clean Architecture |
 | Imagem | SkiaSharp para a composição e Gemini para a geração com IA |
 | Testes | xUnit |
@@ -70,26 +70,35 @@ Você precisa do [Docker](https://www.docker.com/products/docker-desktop/) insta
 ```bash
 git clone https://github.com/nicolas-daher/bora-live.git
 cd bora-live
-docker compose up backend --build
+docker compose up --build
 ```
 
-Por enquanto só o backend sobe. O frontend ainda está a caminho; quando ele chegar, um `docker compose up` vai subir os dois.
-
-Com o backend no ar:
+Com tudo no ar:
 
 | Endereço | O que é |
 |---|---|
+| http://localhost:5173 | O Bora Live |
 | http://localhost:8080/health | Verificação de saúde da API |
-| http://localhost:8080/swagger | Documentação interativa (Swagger) |
+| http://localhost:8080/swagger | Documentação interativa da API (Swagger) |
 
 ### Sem Docker
 
-Com o [SDK do .NET 10](https://dotnet.microsoft.com/download) instalado:
+Com o [SDK do .NET 10](https://dotnet.microsoft.com/download) e o [Node 22](https://nodejs.org/) instalados, use dois terminais.
+
+Backend:
 
 ```bash
 cd backend
 dotnet test
 dotnet run --project src/BoraLive.Api
+```
+
+Frontend, com recarga automática a cada alteração:
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ## Aviso

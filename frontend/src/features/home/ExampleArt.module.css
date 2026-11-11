@@ -1,0 +1,112 @@
+.figure {
+  margin: 0;
+}
+
+.art {
+  /* container-type permite usar a unidade "cqw" (1% da largura DESTA caixa).
+     Com ela, textos e formas encolhem junto com a arte, como numa imagem. */
+  container-type: inline-size;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  /* Céu de fim de tarde: do Noite, no alto, a um rosa escurecido no horizonte. */
+  background: linear-gradient(
+    to bottom,
+    var(--color-night) 0%,
+    var(--color-surface-raised) 45%,
+    color-mix(in srgb, var(--color-pink) 45%, var(--color-night)) 72%
+  );
+}
+
+/* O sol: um círculo com o degradê da marca, fatiado por faixas na metade de baixo. */
+.sun {
+  position: absolute;
+  right: 6cqw;
+  top: 12cqw;
+  width: 30cqw;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, var(--color-sun), var(--color-orange) 50%, var(--color-pink));
+  /* A máscara esconde onde é transparente: cada par de paradas abre uma fatia. */
+  mask-image: linear-gradient(
+    to bottom,
+    black 0 56%,
+    transparent 56% 59%,
+    black 59% 68%,
+    transparent 68% 72%,
+    black 72% 81%,
+    transparent 81% 86%,
+    black 86% 100%
+  );
+}
+
+/* O chão: cobre a parte de baixo do sol e traça o horizonte em turquesa. */
+.ground {
+  position: absolute;
+  inset: 72% 0 0 0;
+  background-color: var(--color-night);
+  border-top: 0.5cqw solid var(--color-teal);
+}
+
+.content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 1.2cqw;
+  padding: 5cqw;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2cqw;
+  margin-bottom: auto; /* empurra o selo para o topo e o texto para a base */
+  padding: 1cqw 2.4cqw;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-teal);
+  color: var(--color-on-accent);
+  font-size: 2.8cqw;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.dot {
+  width: 1.6cqw;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: var(--color-on-accent);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.title {
+  max-width: 56%;
+  font-family: var(--font-display);
+  font-size: 6cqw;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.streamer {
+  font-size: 3.2cqw;
+  font-weight: 600;
+  color: var(--color-sun);
+}
+
+.caption {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}

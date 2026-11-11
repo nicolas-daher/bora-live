@@ -1,0 +1,55 @@
+/*
+ * Tokens da identidade visual do Bora Live.
+ * Este é o ÚNICO arquivo com valores de cor em hexadecimal.
+ * Os componentes usam sempre var(--nome-do-token).
+ */
+:root {
+  /* ---------- Paleta da marca ---------- */
+  --color-night: #1a1033; /* Noite: fundo principal */
+  --color-pink: #ff4f8b; /* Rosa neon: destaque, links */
+  --color-orange: #ff9a3d; /* Laranja: ações, botões primários */
+  --color-sun: #ffd166; /* Amarelo sol: brilho, foco */
+  --color-teal: #2ec4b6; /* Turquesa: "ao vivo", status positivo */
+
+  /* Degradê de pôr do sol: usar com moderação. */
+  --gradient-sunset: linear-gradient(135deg, var(--color-sun), var(--color-orange), var(--color-pink));
+
+  /* ---------- Superfícies (derivadas do Noite, um pouco mais claras) ---------- */
+  --color-surface: #241845; /* cards */
+  --color-surface-raised: #2e2057; /* inputs, itens em destaque */
+  --color-border: #4a3a7d;
+
+  /* ---------- Texto (contraste AA conferido sobre Noite e superfícies) ---------- */
+  --color-text: #f5f0ff; /* 16,1:1 sobre o Noite */
+  --color-text-muted: #b9aedb; /* 8,7:1 sobre o Noite */
+  --color-on-accent: var(--color-night); /* texto sobre laranja, amarelo ou turquesa */
+
+  /* ---------- Tipografia ---------- */
+  --font-display: "Unbounded", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  /* O título principal cresce com a largura da tela, entre 2rem e 3.5rem. */
+  --text-hero: clamp(2rem, 1.2rem + 3.6vw, 3.5rem);
+
+  /* ---------- Espaçamento ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* ---------- Forma ---------- */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+
+  --content-width: 68rem;
+}

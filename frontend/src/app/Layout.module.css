@@ -1,0 +1,81 @@
+/* Coluna de altura total: o rodapé fica no fim mesmo em telas com pouco conteúdo. */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+  width: 100%;
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding: var(--space-4) var(--space-6);
+}
+
+.brand {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Só a altura é fixada: a largura acompanha, e a proporção do logo não muda. */
+.brand img {
+  height: 2.25rem;
+  width: auto;
+}
+
+.navList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navLink {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.navLink:hover {
+  color: var(--color-text);
+}
+
+.navLinkActive {
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+.footer {
+  border-top: 1px solid var(--color-border);
+}
+
+.footerInner {
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding: var(--space-6);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}

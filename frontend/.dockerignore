@@ -1,0 +1,5 @@
+# O node_modules do Windows não serve dentro do container Linux.
+node_modules/
+dist/
+Dockerfile
+.dockerignore
